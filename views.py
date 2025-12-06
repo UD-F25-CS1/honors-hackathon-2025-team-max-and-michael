@@ -482,6 +482,24 @@ def index(state: State):
                         ],
                         classes="page-center-box-container",
                     ),
+                    Div(
+                        content=[
+                            Div(
+                                content=[
+                                    Span("<h1>Generate your schedule</h1>"),
+                                    Span(
+                                        "Tools like WebReg, Blue Hen planner, and Stellic are severely limited. They only show you your potentail schedules or what courses you should consider taking; not both."
+                                    ),
+                                    Span("Evaluate all your possibilities with UD StudyPath!"),
+                                    Span(
+                                        "Our tool allows you to consider course availability and scheduling in one go, saving you time and effort to study for midterms."
+                                    ),
+                                ],
+                                classes="page-center-box",
+                            )
+                        ],
+                        classes="page-center-box-container page-center-box-container-secondary",
+                    ),
                 ],
                 classes="page-container",
             )

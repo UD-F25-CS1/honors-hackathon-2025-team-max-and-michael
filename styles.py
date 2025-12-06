@@ -17,10 +17,11 @@ body {
 
 .form-step-top-bar {
     width: 100%;
-    padding: 10px;
+    padding: 20px;
     background-color: #00539F;
     color: #FFCC00;
     font-weight: bold;
+    font-size: xx-large;
 }
 
 .page-center-box-container {
