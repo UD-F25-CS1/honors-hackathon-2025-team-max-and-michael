@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional, Set
+from typing import List, Optional
 
 
 @dataclass
@@ -100,18 +100,20 @@ class Student:
                 remaining.append(requirement)
         return remaining
 
-    def get_useful_courses(self) -> Set[str]:
+    def get_useful_courses(self) -> List[str]:
         """Gets a list of useful courses for the student to take.
 
         A useful course is a course that helps fulfill a requirement that the student still needs.
 
         Returns:
-            Set[str]: The course codes for the useful courses
+            List[str]: The course codes for the useful courses
         """
-        result: Set[str] = set()
+        # Changed the return type and internal data structure from Set to List
+        result: List[str] = []
         for requirement in self.get_remaining_requirements():
             for course in requirement.course_codes:
-                result.add(course)
+                if course not in result:  # Check for uniqueness
+                    result.append(course)
         return result
 
     def get_tags_satisfied(self, course: Course) -> int:
@@ -134,20 +136,22 @@ class Student:
 class CourseListing:
     available_courses: List[Course]
 
-    def filter_courses_by_codes(self, codes: Set[str]) -> "CourseListing":
+    def filter_courses_by_codes(self, codes: List[str]) -> "CourseListing":
         """Returns only those courses that are in the provided list of course codes
 
         That is to say, intersects the set of "codes" with the "available_courses"
 
         Args:
-            codes (Set[str]): The course codes to include
+            codes (List[str]): The course codes to include
 
         Returns:
             CourseListing: The courses available in the codes list
         """
+        # Changed parameter type hint from Set[str] to List[str]
+        codes_set = set(codes)  # Use a temporary set for efficient lookup
         result: List[Course] = []
         for course in self.available_courses:
-            if course.code in codes:
+            if course.code in codes_set:  # Check against the temporary set
                 result.append(course)
         return CourseListing(result)
 
@@ -177,10 +181,13 @@ class CourseListing:
         """
         result: List[Course] = []
         for course in self.available_courses:
+            has_conflict = False
             for time_slot in course.time_slots:
-                if time_slot not in time_slots:
-                    result.append(course)
+                if time_slot in time_slots:
+                    has_conflict = True
                     break
+            if not has_conflict:
+                result.append(course)
         return CourseListing(result)
 
     def filter_courses_by_difficulty(self, maximum_difficulty: float) -> "CourseListing":
@@ -227,6 +234,7 @@ class CourseListing:
             for tag in desired_tags:
                 if tag in course.tags:
                     result.append(course)
+                    break
         return CourseListing(result)
 
     def filter_courses_by_prerequisites(self, student: Student) -> "CourseListing":
@@ -298,11 +306,13 @@ class Catalog:
         Returns:
             List[str]: The tags in the catalog
         """
-        result: Set[str] = set()
+        # Changed internal data structure from Set to List and perform uniqueness check
+        unique_tags: List[str] = []
         for course in self.courses_offered:
             for tag in course.tags:
-                result.add(tag)
-        return list(result)
+                if tag not in unique_tags:
+                    unique_tags.append(tag)
+        return unique_tags
 
     def get_all_course_codes(self, is_sorted: bool = True) -> List[str]:
         """Returns all of the course codes in the catalog

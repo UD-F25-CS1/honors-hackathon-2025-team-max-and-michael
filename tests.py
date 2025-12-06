@@ -64,7 +64,7 @@ if c1 and c2:
 
 
 useful = student.get_useful_courses()
-assert_equal({"CISC181", "CISC108"}, useful)
+assert_equal(["CISC108", "CISC181"], useful)
 
 course = catalog.get_course_by_code("CISC108")
 if course:
@@ -74,7 +74,7 @@ if course:
 listing = catalog.get_course_listing()
 
 
-filtered = listing.filter_courses_by_codes({"CISC108"})
+filtered = listing.filter_courses_by_codes(["CISC108"])
 assert_equal(["CISC108"], [c.code for c in filtered.available_courses])
 
 

@@ -1,4 +1,4 @@
-from typing import List, Set, Tuple, Union
+from typing import List, Tuple, Union
 
 from drafter import Argument, Button, Div, Page, PageContent, SelectBox, Span, TextArea, TextBox, route
 
@@ -238,11 +238,12 @@ def build_schedules(student: "Student", n_schedules: int = 25) -> List[List[Tupl
 
     # Initialize the results container
     results: List[List[Tuple[str, int]]] = []
-    found_schedules: Set[Tuple[Tuple[str, int], ...]] = set()
+    # Replaced Set with List for storing canonical schedules.
+    found_schedules: List[Tuple[Tuple[str, int], ...]] = []
 
     # **State container:** A mutable list to hold and share the state
     # state[0] = results list
-    # state[1] = found_schedules set
+    # state[1] = found_schedules list (to check for duplicates)
     state = [results, found_schedules]
 
     # Recursive schedule builder
@@ -257,19 +258,22 @@ def build_schedules(student: "Student", n_schedules: int = 25) -> List[List[Tupl
             return  # stop early
 
         # Track used time slots and used course codes
-        used_slots = {slot for _, slot in current_sched}
-        used_codes = {code for code, _ in current_sched}
+        # Replaced set comprehensions with list comprehensions.
+        used_slots = [slot for _, slot in current_sched]
+        used_codes = [code for code, _ in current_sched]
 
         # Try to find something new to add
         added_any = False
 
         for course in pool_list:
             # Skip if code already used
+            # This check is O(N) where N is the length of used_codes (which is max 6-8)
             if course.code in used_codes:
                 continue
 
             # Try each time slot for that course
             for slot in course.time_slots:
+                # This check is O(N) where N is the length of used_slots (which is max 6-8)
                 if slot in used_slots:
                     continue  # time conflict
 
@@ -289,8 +293,10 @@ def build_schedules(student: "Student", n_schedules: int = 25) -> List[List[Tupl
             # Sort schedule to ensure duplicate-free canonical form
             canonical = tuple(sorted(current_sched))
 
+            # Duplication check is O(N*L) where N is the number of found schedules and L is schedule length
             if canonical not in current_found_schedules:
-                current_found_schedules.add(canonical)
+                # Append to the shared found_schedules list (state[1])
+                current_found_schedules.append(canonical)
                 # Append to the shared results list (state[0])
                 current_results.append(list(canonical))
 
