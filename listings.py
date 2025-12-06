@@ -1,3 +1,5 @@
+from typing import Dict
+
 from courses import Catalog, Course, Curriculum, TakenRequirement
 
 # Used generative AI to generate list of requirements
@@ -390,3 +392,8 @@ UNIVERSITY_CATALOG = Catalog(
         ),
     ]
 )
+
+
+AVAILABLE_MAJORS: Dict[str, Curriculum] = {
+    "Chemical Engineering": CHEMICAL_ENGINEERING_CURRICULUM,
+}
