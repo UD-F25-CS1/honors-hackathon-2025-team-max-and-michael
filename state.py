@@ -7,4 +7,4 @@ from courses import Student
 @dataclass
 class State:
     student: Student
-    schedule: List[Tuple[str, int]]
+    schedule_options: List[List[Tuple[str, int]]]
