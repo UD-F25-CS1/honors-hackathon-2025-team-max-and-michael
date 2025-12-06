@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Set
 
 
 @dataclass
@@ -10,6 +10,7 @@ class TakenRequirement:
 
 @dataclass
 class Course:
+    # Must be 7-character (e.g. CISC108)
     code: str
     title: str
     credits: int
@@ -21,6 +22,22 @@ class Course:
     # Difficulty is rated on a scale of 1.0 to 5.0, as in RateMyProfessor.
     # Values pulled from RMP averages over all profs teaching course
     difficulty: float
+
+    def get_course_number(self) -> int:
+        """Extracts the course number from the course code
+
+        Returns:
+            int: The course number
+        """
+        return int(self.code[4:])
+
+    def get_course_level(self) -> int:
+        """Extracts the course level (100, 200, etc) from the course code
+
+        Returns:
+            int: The course level
+        """
+        return (self.get_course_number() // 100) * 100
 
 
 @dataclass
@@ -83,10 +100,56 @@ class Student:
                 remaining.append(requirement)
         return remaining
 
+    def get_useful_courses(self) -> Set[str]:
+        """Gets a list of useful courses for the student to take.
+
+        A useful course is a course that helps fulfill a requirement that the student still needs.
+
+        Returns:
+            Set[str]: The course codes for the useful courses
+        """
+        result: Set[str] = set()
+        for requirement in self.get_remaining_requirements():
+            for course in requirement.course_codes:
+                result.add(course)
+        return result
+
+    def get_tags_satisfied(self, course: Course) -> int:
+        """Gets the number of desired tags that a course satisfies
+
+        Args:
+            course (Course): The course to consider
+
+        Returns:
+            int: The number of user-selected tags a course satisfies
+        """
+        count: int = 0
+        for tag in self.interest_tags:
+            if tag in course.tags:
+                count += 1
+        return count
+
 
 @dataclass
 class CourseListing:
     available_courses: List[Course]
+
+    def filter_courses_by_codes(self, codes: Set[str]) -> "CourseListing":
+        """Returns only those courses that are in the provided list of course codes
+
+        That is to say, intersects the set of "codes" with the "available_courses"
+
+        Args:
+            codes (Set[str]): The course codes to include
+
+        Returns:
+            CourseListing: The courses available in the codes list
+        """
+        result: List[Course] = []
+        for course in self.available_courses:
+            if course.code in codes:
+                result.append(course)
+        return CourseListing(result)
 
     def filter_courses_by_time(self, time_slot: int) -> "CourseListing":
         """Returns all of the courses with a course at that time
@@ -101,6 +164,23 @@ class CourseListing:
         for course in self.available_courses:
             if time_slot in course.time_slots:
                 result.append(course)
+        return CourseListing(result)
+
+    def filter_courses_by_time_slots(self, time_slots: List[int]) -> "CourseListing":
+        """Returns the courses that do NOT take place in ANY of the time slots specified
+
+        Args:
+            time_slots (List[int]): The already taken time slots
+
+        Returns:
+            CourseListing: The courses that do not conflict
+        """
+        result: List[Course] = []
+        for course in self.available_courses:
+            for time_slot in course.time_slots:
+                if time_slot not in time_slots:
+                    result.append(course)
+                    break
         return CourseListing(result)
 
     def filter_courses_by_difficulty(self, maximum_difficulty: float) -> "CourseListing":
@@ -164,6 +244,35 @@ class CourseListing:
                 result.append(course)
         return CourseListing(result)
 
+    def filter_courses_by_bounding_times(self, student: Student) -> "CourseListing":
+        """Filters courses by the start and end of day bounds provided by the student.
+
+        Args:
+            student (Student): The student whose distances to consider
+
+        Returns:
+            CourseListing: The çourses that are within the allowed times
+        """
+        result: List[Course] = []
+        for course in self.available_courses:
+            for time_slot in course.time_slots:
+                # If MWF time slot
+                if time_slot < 12:
+                    if (
+                        time_slot >= student.distance_from_first_slot
+                        and time_slot < 12 - student.distance_from_last_slot
+                    ):
+                        result.append(course)
+                        break
+                # TR time slot
+                else:
+                    if (
+                        time_slot - 12
+                    ) >= student.distance_from_first_slot and time_slot < 22 - student.distance_from_last_slot:
+                        result.append(course)
+                        break
+        return CourseListing(result)
+
 
 @dataclass
 class Catalog:
@@ -194,6 +303,14 @@ class Catalog:
             for tag in course.tags:
                 result.append(tag)
         return result
+
+    def get_course_listing(self) -> CourseListing:
+        """Gets a course listing from the Catalog
+
+        Returns:
+            CourseListing: A CourseListing containing all courses offered in the catalog
+        """
+        return CourseListing([course for course in self.courses_offered])
 
 
 BLANK_CURRICULUM = Curriculum([])
