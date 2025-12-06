@@ -1,12 +1,16 @@
-from bakery import assert_equal
-from drafter import *
-from dataclasses import dataclass
+from drafter import (  # , hide_debug_information, set_website_framed
+    set_site_information,
+    set_website_title,
+    start_server,
+)
 
-from meta import *
+import views  # noqa: F401
+from courses import BLANK_STUDENT
+from state import State
 
 # hide_debug_information()
 # set_website_framed(False)
-set_website_title("Your Drafter Website")
+set_website_title("UD StudyPath")
 set_site_information(
     "author",
     """
@@ -17,13 +21,5 @@ Your description can go here.
     [],
 )
 
-@dataclass
-class State:
-    pass
 
-@route
-def index(state: State) -> Page:
-    return Page(state, ["Hello ___!"])
-
-
-start_server(State())
+start_server(State(BLANK_STUDENT, []))
