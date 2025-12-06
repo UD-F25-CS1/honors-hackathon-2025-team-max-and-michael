@@ -27,7 +27,7 @@ set_site_information(
     Begin your UD StudyPath and UD study paths today!
 """,
     sources=["Used generative AI for some code generation", "https://gemini.google.com"],
-    planning=["https://docs.google.com/presentation/d/18-BhAJuDB6_1G6gx9oXqxJJQq_YlVO1RFA_q8HSKy40/edit?usp=sharing"],
+    planning=["plan.pdf"],
     links=["https://github.com/UD-F25-CS1/honors-hackathon-2025-team-max-and-michael"],
 )
 
