@@ -183,6 +183,18 @@ class Catalog:
                 return course
         return None
 
+    def get_all_tags(self) -> List[str]:
+        """Returns all the available tags from offered courses
+
+        Returns:
+            List[str]: The tags in the catalog
+        """
+        result: List[str] = []
+        for course in self.courses_offered:
+            for tag in course.tags:
+                result.append(tag)
+        return result
+
 
 BLANK_CURRICULUM = Curriculum([])
 BLANK_STUDENT = Student(
