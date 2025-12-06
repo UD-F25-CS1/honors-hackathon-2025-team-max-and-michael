@@ -219,49 +219,41 @@ def order_course_pool(course_pool: CourseListing, student: Student) -> CourseLis
     return CourseListing([sorting_data[0] for sorting_data in with_sorting_data])
 
 
-def build_schedules(student: Student, n_schedules: int = 25) -> List[List[Tuple[str, int]]]:
+def build_schedules(student: "Student", n_schedules: int = 25) -> List[List[Tuple[str, int]]]:
     """Builds possible schedules for a student based on their preferences.
 
-    Generates a maximum of n_schedules schedules recursively.
-
-    Only generates "complete" schedules; i.e., schedules where the algorithm reached a situation where it couldn't add any more courses
+    Generates a maximum of n_schedules schedules recursively without using 'nonlocal'.
 
     Args:
         student (Student): The student whose preferences to consider
-        n_schedules (int, optional): The maximum number of schedules to generate. Defaults to 10.
+        n_schedules (int, optional): The maximum number of schedules to generate. Defaults to 25.
 
     Returns:
         List[List[Tuple[str, int]]]: The list of schedules
     """
-    # Get the course pool
+    # Get the course pool (assuming this returns an object with an available_courses list)
     unordered_course_pool = build_course_pool(student)
     course_pool = order_course_pool(unordered_course_pool, student)
     pool_list = course_pool.available_courses
 
-    # Generative AI used to assist with creating the rest of the algorithm
-    # i.e., used in the construction of the rest of this function
-    found_schedules: Set[Tuple[Tuple[str, int], ...]] = set()
+    # Initialize the results container
     results: List[List[Tuple[str, int]]] = []
+    found_schedules: Set[Tuple[Tuple[str, int], ...]] = set()
 
-    # Pre-expand courses into individual (course_code, time_slot) offerings
-    # e.g. CISC108 with time_slots [1,3,14] becomes:
-    #   [("CISC108", 1), ("CISC108", 3), ("CISC108", 14)]
-    offerings = []
-    for course in pool_list:
-        for slot in course.time_slots:
-            offerings.append((course.code, slot))
-
-    # Build indexes to avoid repeatedly scanning the catalog
-    # Map code → all its times
-    course_to_offerings = {}
-    for code, slot in offerings:
-        course_to_offerings.setdefault(code, []).append((code, slot))
+    # **State container:** A mutable list to hold and share the state
+    # state[0] = results list
+    # state[1] = found_schedules set
+    state = [results, found_schedules]
 
     # Recursive schedule builder
-    def backtrack(current_sched: List[Tuple[str, int]]):
-        nonlocal results
+    # It now accepts the mutable 'state' object to modify shared variables
+    def backtrack(current_sched: List[Tuple[str, int]], state: List):
+        # Unpack state
+        current_results = state[0]
+        current_found_schedules = state[1]
 
-        if len(results) >= n_schedules:
+        # Check termination condition using the shared results list
+        if len(current_results) >= n_schedules:
             return  # stop early
 
         # Track used time slots and used course codes
@@ -284,9 +276,12 @@ def build_schedules(student: Student, n_schedules: int = 25) -> List[List[Tuple[
                 # Valid addition → recurse
                 added_any = True
                 new_sched = current_sched + [(course.code, slot)]
-                backtrack(new_sched)
 
-                if len(results) >= n_schedules:
+                # Pass the mutable state to the recursive call
+                backtrack(new_sched, state)
+
+                # Re-check termination condition after the recursive call returns
+                if len(current_results) >= n_schedules:
                     return
 
         # If we reached a point where nothing new can be added, store schedule
@@ -294,13 +289,18 @@ def build_schedules(student: Student, n_schedules: int = 25) -> List[List[Tuple[
             # Sort schedule to ensure duplicate-free canonical form
             canonical = tuple(sorted(current_sched))
 
-            if canonical not in found_schedules:
-                found_schedules.add(canonical)
-                results.append(list(canonical))
+            if canonical not in current_found_schedules:
+                current_found_schedules.add(canonical)
+                # Append to the shared results list (state[0])
+                current_results.append(list(canonical))
 
-    # Start recursion with the empty schedule
-    backtrack([])
+                # Note: The state list itself is not returned,
+                # but the objects it holds (results and found_schedules) are modified in place.
 
+    # Start recursion with the empty schedule and the initial state
+    backtrack([], state)
+
+    # Return the results list (which was modified by backtrack)
     return results
 
 
@@ -330,7 +330,7 @@ def process_schedules(state: State, course_tags: str) -> Page:
     return browse_schedule(state)
 
 
-def generate_period_block(course_code: str = "Unoccupied", classes: str = "blank-period") -> Div:
+def generate_period_block(course_code: str = "-", classes: str = "blank-period") -> Div:
     """Generates a period display block for a period
 
     Args:
