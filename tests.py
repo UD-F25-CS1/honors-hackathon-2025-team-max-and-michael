@@ -1,3 +1,5 @@
+# Used generative AI to assist with unit tests
+
 from bakery import assert_equal
 
 from courses import Catalog, Course, Curriculum, Student, TakenRequirement
