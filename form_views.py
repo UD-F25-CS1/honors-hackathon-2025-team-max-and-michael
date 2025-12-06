@@ -27,13 +27,13 @@ def make_form_step(internal_content: List[Union[PageContent, str]], proceed_url:
                                 *internal_content,
                                 Button("Continue", proceed_url, classes="form-step-continue", id="form-next-button"),
                             ],
-                            classes="form-step-center-box",
+                            classes="page-center-box",
                         )
                     ],
-                    classes="form-step-center-box-container",
+                    classes="page-center-box-container",
                 ),
             ],
-            classes="form-step-container",
+            classes="page-container",
         )
     ]
 
@@ -68,15 +68,15 @@ def enter_taken_courses(state: State, major_selected: str) -> Page:
         state,
         make_form_step(
             [
-                Span("Enter the Courses you have already taken:<br>"),
+                Span("<h3>Enter the Courses you have already taken:</h3>"),
                 Span(
-                    'For example, you might write "CISC108,BISC217,MATH243" if you have taken CISC 108, BISC 217, and MATH 243.<br>'
+                    'For example, you might write "CISC108,BISC217,MATH243" if you have taken CISC 108, BISC 217, and MATH 243.'
                 ),
                 Span(
-                    "Note that all course codes must be exactly 7 characters long (4 for the department, 3 for the ID).<br>"
+                    "Note that all course codes must be exactly 7 characters long (4 for the department, 3 for the ID)."
                 ),
-                Span("Any invalid input will send you back to this screen.<br>"),
-                TextArea("taken_courses", ""),
+                Span("Any invalid input will send you back to this screen."),
+                TextArea("taken_courses", "", width="500"),
             ],
             "enter_desired_timeslots",
         ),
@@ -99,7 +99,7 @@ def enter_desired_timeslots(state: State, taken_courses: str) -> Page:
         state,
         make_form_step(
             [
-                Span("When are you comfortable taking classes?"),
+                Span("<h3>When are you comfortable taking classes?</h3>"),
                 Span("Enter the number of periods from the start of the day:"),
                 TextBox("starting_timeslot", "0", kind="number", min="0", max="4"),
                 Span("Enter the number of periods before the end of the day:"),
@@ -123,7 +123,7 @@ def enter_desired_credit_load(state: State, starting_timeslot: int, ending_times
         state,
         make_form_step(
             [
-                Span("Enter how many credit hours (0-18) you want for the semester:"),
+                Span("<h3>Enter how many credit hours (0-18) you want for the semester:</h3>"),
                 TextBox("credit_load", "16", kind="number", min="12", max="23"),
             ],
             "enter_desired_difficulty_load",
@@ -144,7 +144,7 @@ def enter_desired_difficulty_load(state: State, credit_load: int) -> Page:
         make_form_step(
             [
                 Span(
-                    "Enter the maximum total difficulty load (averages around 3-4 points per class) for your semester."
+                    "<h3>Enter the maximum total difficulty load (averages around 3-4 points per class) for your semester.</h3>"
                 ),
                 TextBox("difficulty_load", "25", kind="number", min="20", max="40"),
             ],
@@ -164,8 +164,10 @@ def enter_desired_course_tags(state: State, difficulty_load: int) -> Page:
         state,
         make_form_step(
             [
-                Span("What course tags would you like to take?"),
-                SelectBox("course_tags", UNIVERSITY_CATALOG.get_all_tags()),
+                Span("<h3>What course tags would you like to take?</h3>"),
+                Span("Enter comma-separated course tags."),
+                Span(f"Available course tags: {', '.join(UNIVERSITY_CATALOG.get_all_tags())}"),
+                TextArea("course_tags", "", width="500"),
             ],
             "process_schedules",
         ),

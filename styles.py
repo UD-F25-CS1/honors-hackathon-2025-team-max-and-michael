@@ -9,7 +9,7 @@ body {
     margin: 0;
 }
 
-.form-step-container {
+.page-container {
     width: 100%;
     text-align: center;
     background-color: #F7F7F7;
@@ -23,7 +23,7 @@ body {
     font-weight: bold;
 }
 
-.form-step-center-box-container {
+.page-center-box-container {
     width: 100%;
     display: flex;
     padding: 25px;
@@ -31,18 +31,18 @@ body {
     justify-content: center;
 }
 
-.form-step-center-box {
+.page-center-box {
     padding: 40px;
     color: white;
     background-color: #00539F;
     text-align: center;
 }
 
-.form-step-center-box br {
+.page-center-box span {
     margin-top: 10px;
 }
 
-.form-step-center-box * {
+.page-center-box * {
     display: block;
 }
 
@@ -73,5 +73,46 @@ button:hover {
 #form-next-button {
     margin-top: 10px;
     text-align: center;
+}
+
+textarea {
+    margin-top: 15px;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+.schedule-container {
+    width: 100%;
+    display: flex;
+}
+
+.schedule-container div {
+    flex: 1;
+}
+
+.period-block {
+    padding: 3px;
+}
+
+.period-block-mwf {
+    margin-bottom: 4.4px;
+}
+
+.period-block-tr {
+    margin-bottom: 11px;
+}
+
+.center-box h1 {
+    margin-top: 30px;
+}
+
+.schedule-switching-controls {
+    margin-top: 25px;
+}
+
+#previous-button {
+    margin-right: 10px;
 }
 """

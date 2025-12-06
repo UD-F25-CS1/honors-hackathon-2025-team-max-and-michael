@@ -142,7 +142,13 @@ def process_schedules(state: State, tags_selected: List[str]) -> Page:
     Returns:
         Page: The schedule browsing page, after the user has already built their schedule
     """
-
+    # Process the taken courses
+    # course_strings = taken_courses.split(",")
+    # for course_code in course_strings:
+    #     if len(course_code) != 7:
+    #         return enter_taken_courses(state.major)
+    # state.student.has_taken = course_strings
+    # state.schedule_options = build_schedules(state.student)
     return Page(state, [])
 
 

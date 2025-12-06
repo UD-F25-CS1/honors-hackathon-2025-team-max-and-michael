@@ -6,8 +6,7 @@ from drafter import (  # , hide_debug_information, set_website_framed
     start_server,
 )
 
-import form_views  # noqa: F401
-import schedule_views  # noqa: F401
+import views  # noqa: F401
 from courses import BLANK_STUDENT
 from state import State
 from styles import SITE_STYLES
