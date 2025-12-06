@@ -8,3 +8,4 @@ from courses import Student
 class State:
     student: Student
     schedule_options: List[List[Tuple[str, int]]]
+    major: str

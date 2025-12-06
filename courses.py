@@ -298,11 +298,25 @@ class Catalog:
         Returns:
             List[str]: The tags in the catalog
         """
-        result: List[str] = []
+        result: Set[str] = set()
         for course in self.courses_offered:
             for tag in course.tags:
-                result.append(tag)
-        return result
+                result.add(tag)
+        return list(result)
+
+    def get_all_course_codes(self, is_sorted: bool = True) -> List[str]:
+        """Returns all of the course codes in the catalog
+
+        Args:
+            is_sorted (bool, optional): Whether to sort alphabetically. Defaults to True.
+
+        Returns:
+            List[str]: The (potentially sorted) course codes
+        """
+        course_codes = [course.code for course in self.courses_offered]
+        if is_sorted:
+            course_codes.sort()
+        return course_codes
 
     def get_course_listing(self) -> CourseListing:
         """Gets a course listing from the Catalog

@@ -1,6 +1,6 @@
 from typing import List, Set, Tuple
 
-from drafter import Page, route
+from drafter import Button, Page, route
 
 from courses import Course, CourseListing, Student
 from listings import UNIVERSITY_CATALOG
@@ -46,7 +46,7 @@ def order_course_pool(course_pool: CourseListing, student: Student) -> CourseLis
     return CourseListing([sorting_data[0] for sorting_data in with_sorting_data])
 
 
-def build_schedules(student: Student, n_schedules: int = 100) -> List[List[Tuple[str, int]]]:
+def build_schedules(student: Student, n_schedules: int = 10) -> List[List[Tuple[str, int]]]:
     """Builds possible schedules for a student based on their preferences.
 
     Generates a maximum of n_schedules schedules recursively.
@@ -55,7 +55,7 @@ def build_schedules(student: Student, n_schedules: int = 100) -> List[List[Tuple
 
     Args:
         student (Student): The student whose preferences to consider
-        n_schedules (int, optional): The maximum number of schedules to generate. Defaults to 100.
+        n_schedules (int, optional): The maximum number of schedules to generate. Defaults to 10.
 
     Returns:
         List[List[Tuple[str, int]]]: The list of schedules
@@ -149,3 +149,8 @@ def process_schedules(state: State, tags_selected: List[str]) -> Page:
 @route
 def browse_schedule(state: State):
     pass
+
+
+@route
+def index(state: State):
+    return Page(state, ["Begin your journey!", Button("Create my schedule", "select_major")])

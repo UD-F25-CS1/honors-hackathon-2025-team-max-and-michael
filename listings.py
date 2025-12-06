@@ -35,7 +35,7 @@ CHEMICAL_ENGINEERING_CURRICULUM = Curriculum(
         # Breadth / General Education / Electives — represent as “take at least X total from list”
         # For simplicity, treat as a large pool: minimum 6 courses from breadthelectives list
         TakenRequirement(
-            course_codes=["ENGG101", "ENGL110", "Breadth1", "Breadth2", "Breadth3", "Breadth4", "Breadth5", "Breadth6"],
+            course_codes=["EGGG101", "ENGL110", "Breadth1", "Breadth2", "Breadth3", "Breadth4", "Breadth5", "Breadth6"],
             minimum_count=6,
         ),
         # Technical / CHEG Electives — at least 3 more CHEG electives (codes placeholder)
@@ -168,7 +168,7 @@ UNIVERSITY_CATALOG = Catalog(
         ),
         # ---------------- Intro / General ----------------
         Course(
-            code="ENGG101",
+            code="EGGG101",
             title="Intro to Engineering",
             credits=1,
             time_slots=[0, 12],
@@ -316,7 +316,7 @@ UNIVERSITY_CATALOG = Catalog(
             difficulty=3.2,
         ),
         Course(
-            code="STATS200",
+            code="STAT200",
             title="Intro to Statistics",
             credits=3,
             time_slots=[2, 4, 14],
@@ -373,8 +373,8 @@ UNIVERSITY_CATALOG = Catalog(
         ),
         # ---------------- CHEG Elective pool placeholders (few concrete options) ----------------
         Course(
-            code="CHEG_ELECTIVE_1",
-            title="CHEG Elective: Process Safety",
+            code="CHEG877",
+            title="Process Safety",
             credits=3,
             time_slots=[17, 19],
             tags=["cheg", "elective"],
@@ -382,8 +382,8 @@ UNIVERSITY_CATALOG = Catalog(
             difficulty=3.9,
         ),
         Course(
-            code="CHEG_ELECTIVE_2",
-            title="CHEG Elective: Environmental Engineering",
+            code="CHEG999",
+            title="Chemistry or something",
             credits=3,
             time_slots=[18, 20],
             tags=["cheg", "elective"],

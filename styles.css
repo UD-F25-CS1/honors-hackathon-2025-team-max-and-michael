@@ -1,1 +1,17 @@
-/* Test */
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-step-container {
+    width: 100%;
+    text-align: center;
+    background-color: #F7F7F7;
+}
+
+.form-step-top-bar {
+    width: 100%;
+    padding: 10px;
+    background-color: #00539F;
+    color: #FFCC00;
+}
